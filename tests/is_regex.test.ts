@@ -1,13 +1,13 @@
-import {isRegExp} from "../src";
+import { isRegExp } from "../src/type_helper.js";
 
-describe('isRegExp', () => {
-    it('should return true for RegExp inputs', () => {
+describe("isRegExp", () => {
+    it("should return true for RegExp inputs", () => {
         expect(isRegExp(/abc/)).toBe(true);
-        expect(isRegExp(new RegExp('abc'))).toBe(true);
+        expect(isRegExp(new RegExp("abc"))).toBe(true);
     });
 
-    it('should return false for non-RegExp inputs', () => {
-        expect(isRegExp('Hello')).toBe(false);
+    it("should return false for non-RegExp inputs", () => {
+        expect(isRegExp("Hello")).toBe(false);
         expect(isRegExp(123)).toBe(false);
         expect(isRegExp({})).toBe(false);
         expect(isRegExp([])).toBe(false);

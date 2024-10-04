@@ -1,12 +1,12 @@
-import {isUndefined} from "../src";
+import { isUndefined } from "../src/type_helper.js";
 
-describe('isUndefined', () => {
-    it('should return true for undefined inputs', () => {
+describe("isUndefined", () => {
+    it("should return true for undefined inputs", () => {
         expect(isUndefined(undefined)).toBe(true);
     });
 
-    it('should return false for non-undefined inputs', () => {
-        expect(isUndefined('Hello')).toBe(false);
+    it("should return false for non-undefined inputs", () => {
+        expect(isUndefined("Hello")).toBe(false);
         expect(isUndefined(123)).toBe(false);
         expect(isUndefined({})).toBe(false);
         expect(isUndefined([])).toBe(false);

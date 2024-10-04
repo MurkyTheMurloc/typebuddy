@@ -1,0 +1,7 @@
+{
+    "name": "@guard/typebuddy",
+    "version": "0.1.0",
+    "description": "Your new best friend for simple typescript guards every project needs.",
+    "exports": "./src/type_helper.ts",
+    "license": "MIT"
+}

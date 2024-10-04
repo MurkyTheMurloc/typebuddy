@@ -4,26 +4,22 @@ const uuidRegex =
 const ulidRegex = /^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$/;
 
 /**
- * Returns true if the value is an object.
+ * Check if a value is a string.
  * @param {unknown} value - The value to check.
- * @returns {boolean} True if the value is an object.
+ * @returns {boolean} True if the value is a string.
  */
-export function isObject(value: unknown): value is object {
-    return (
-        typeof value === "object" &&
-        !isNull(value) &&
-        !isUndefined(value) &&
-        !Array.isArray(value)
-    );
+export function isString(value: unknown): value is string {
+    return typeof value === "string";
 }
 
 /**
- * Returns true if the value is a boolean.
+ * Parses the input value as a boolean. Returns false if the value is no string.
  * @param {unknown} value - The value to check.
- * @returns {boolean} True if the value is a boolean.
+ * @returns {boolean} True if the value is a string.
  */
-export function isBoolean(value: unknown): value is boolean {
-    return typeof value === "boolean";
+export function isEmptyString(value: unknown): boolean {
+    if (!isString(value)) return false;
+    return value.trim() === "";
 }
 
 /**
@@ -42,6 +38,72 @@ export function isNull(value: unknown): value is null {
  */
 export function isUndefined(value: unknown): value is undefined {
     return value === undefined;
+}
+
+/**
+ * Check if a value is an array.
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is an array.
+ */
+export function isArray<T>(value: unknown): value is T[] {
+    return Array.isArray(value);
+}
+
+/**
+ * Check if a value is an empty array.
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is an empty array.
+ */
+export function isEmptyArray<T>(value: unknown): value is T[] {
+    return Array.isArray(value) && value.length === 0;
+}
+
+/**
+ * more performant implementation of isArray for large arrays
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is an array.
+ */
+export function fastIsArray<T>(value: unknown): value is T[] {
+    return Object.prototype.toString.call(value) === "[object Array]";
+}
+
+/**
+ * Check if a value is a number.
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is a number.
+ */
+export function isNumber(value: unknown): value is number {
+    if (typeof value === "string" && value.trim() === "") {
+        return false;
+    }
+    return (
+        typeof value === "number" &&
+        !Number.isNaN(value) &&
+        Number.isFinite(+value)
+    );
+}
+
+/**
+ * Returns true if the value is an object.
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is an object.
+ */
+export function isObject(value: unknown): value is object {
+    return (
+        typeof value === "object" &&
+        !isNull(value) &&
+        !isUndefined(value) &&
+        !isEmptyArray(value)
+    );
+}
+
+/**
+ * Returns true if the value is a boolean.
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is a boolean.
+ */
+export function isBoolean(value: unknown): value is boolean {
+    return typeof value === "boolean";
 }
 
 /**
@@ -107,10 +169,17 @@ export function isSymbol(value: unknown): value is symbol {
  * @param {unknown} value - The value to check.
  * @returns {boolean} True if the value is a plain object.
  */
-export function isPlainObject<T extends Record<string, unknown>>(
+export function isEmptyObject(
     value: unknown
-): value is T {
-    return typeof value === "object" && value !== null && !Array.isArray(value);
+): value is Record<string, unknown> {
+    return (
+        typeof value === "object" &&
+        !isNull(value) &&
+        !isUndefined(value) &&
+        !isEmptyArray(value) &&
+        Object.getPrototypeOf(value) === Object.prototype &&
+        Object.keys(value).length === 0
+    );
 }
 
 /**
@@ -127,15 +196,6 @@ export function isInstanceOf<T>(
 }
 
 /**
- * Get the type of value.
- * @param {unknown} value - The value to check.
- * @returns  type of value.
- */
-export function getType<T>(value: T): T {
-    return value;
-}
-
-/**
  * Get the keys of an object.
  * @param {unknown} object - The object to get the keys of.
  * @returns {Array} Keys of object.
@@ -147,28 +207,20 @@ export function getKeys<T extends Record<string, unknown>>(
 }
 
 /**
- * Check if a value is an array.
+ * Parses the input value as an integer. Returns NaN if the value cannot
+ * be parsed.
  * @param {unknown} value - The value to check.
- * @returns {boolean} True if the value is an array.
+ * @returns {number} The parsed integer.
  */
-export function isArray<T>(value: unknown): value is T[] {
-    return Array.isArray(value);
-}
-
-/**
- * Check if a value is a number.
- * @param {unknown} value - The value to check.
- * @returns {boolean} True if the value is a number.
- */
-export function isNumber(value: unknown): value is number {
-    if (typeof value === "string" && value.trim() === "") {
-        return false;
+export function parseInteger(value: unknown): number {
+    if (isNumber(value)) {
+        return Math.floor(value);
+    } else if (isString(value)) {
+        const parsed = parseInt(value, 10);
+        return (isNaN(parsed) ? NaN : parsed) satisfies number;
+    } else {
+        return NaN;
     }
-    return (
-        typeof value === "number" &&
-        !Number.isNaN(value) &&
-        Number.isFinite(+value)
-    );
 }
 
 /**
@@ -194,14 +246,21 @@ export function isFloat(value: unknown): value is number {
 }
 
 /**
- * Check if a value is a string.
+ * Parses the input value as a float. Returns NaN if the value
+ * cannot be parsed.
  * @param {unknown} value - The value to check.
- * @returns {boolean} True if the value is a string.
+ * @returns {number} The parsed float.
  */
-export function isString(value: unknown): value is string {
-    return typeof value === "string";
+export function parseFloat(value: unknown): number {
+    if (isNumber(value)) {
+        return value;
+    } else if (isString(value)) {
+        const parsed = parseFloat(value);
+        return isNaN(parsed) ? NaN : parsed;
+    } else {
+        return NaN;
+    }
 }
-
 /**
  * Parses the input value as a number. Returns NaN if the value cannot be
  * parsed.
@@ -216,40 +275,6 @@ export function parseNumber(value: unknown): number {
         return isNaN(parsed) ? NaN : parsed;
     } else {
         return 0;
-    }
-}
-
-/**
- * Parses the input value as an integer. Returns NaN if the value cannot
- * be parsed.
- * @param {unknown} value - The value to check.
- * @returns {number} The parsed integer.
- */
-export function parseInteger(value: unknown): number {
-    if (isNumber(value)) {
-        return Math.floor(value);
-    } else if (isString(value)) {
-        const parsed = parseInt(value, 10);
-        return (isNaN(parsed) ? NaN : parsed) satisfies number;
-    } else {
-        return NaN;
-    }
-}
-
-/**
- * Parses the input value as a float. Returns NaN if the value
- * cannot be parsed.
- * @param {unknown} value - The value to check.
- * @returns {number} The parsed float.
- */
-export function parseFloat(value: unknown): number {
-    if (isNumber(value)) {
-        return value;
-    } else if (isString(value)) {
-        const parsed = parseFloat(value);
-        return isNaN(parsed) ? NaN : parsed;
-    } else {
-        return NaN;
     }
 }
 
@@ -272,21 +297,6 @@ export function parseString(value: unknown): string {
 }
 
 /**
- * Parses the input value as a boolean. Returns false if the value is no string.
- * @param {unknown} value - The value to check.
- * @returns {boolean} True if the value is a string.
- */
-
-/**
- *
- * @param value
- */
-export function isEmptyString(value: unknown): boolean {
-    if (!isString(value)) return false;
-    return value.trim() === "";
-}
-
-/**
  * Returns true if the value is an empty string, an empty object, or an empty number.
  * @param {unknown} value - The value to check.
  * @returns {boolean} True if the value is an empty string, an empty object, or an empty number.
@@ -294,7 +304,7 @@ export function isEmptyString(value: unknown): boolean {
 export function isNullOrUndefined(value: unknown): boolean {
     if (isString(value)) {
         return isEmptyString(value);
-    } else if (isPlainObject(value)) {
+    } else if (!isEmptyObject(value) && isObject(value)) {
         for (const key in value) {
             if (!isNullOrUndefined(value[key])) {
                 return false;
@@ -314,15 +324,21 @@ export function isNullOrUndefined(value: unknown): boolean {
 }
 
 /**
- * Returns true if an object contains an empty value.
- * @param value
+ * Checks if the provided value contains empty values.
+ *
+ * This function determines if the given value is either an empty string,
+ * an empty object, or a string representation of an empty object.
+ *
+ * @param value - The value to check for emptiness. It can be of any type.
+ * @returns `true` if the value is an empty string, an empty object, or a string
+ *          representation of an empty object; otherwise, `false`.
  */
 export function hasEmptyValues(value: unknown): boolean {
     if (isString(value)) {
-        if (isPlainObject(JSON.parse(value))) return true;
+        if (isEmptyObject(JSON.parse(value))) return true;
         return isEmptyString(value);
     }
-    return !!isPlainObject(value);
+    return isEmptyObject(value);
 }
 
 /**
@@ -341,7 +357,7 @@ export function parseArray<T>(value: unknown): T[] {
     if (isNumber(value)) {
         return [value] as T[];
     }
-    if (isPlainObject(value)) {
+    if (isEmptyObject(value)) {
         return [value] as T[];
     }
 
@@ -352,24 +368,19 @@ export function parseArray<T>(value: unknown): T[] {
 }
 
 /**
- *  Compares two arrays and returns true if they have at least one common value.
- * @param array1
- * @param array2
+ * Compares two arrays and returns true if they have at least one common value.
+ * @param array1 - First array.
+ * @param array2 - Second array.
  * @returns {boolean} True if the arrays have at least one common value.
  */
 export function arrayContainsCommonValue(
     array1: string[],
     array2: string[]
 ): boolean {
-    if (!array1 || !array2) return false;
-    if (!array1.length || !array2.length) return false;
+    if (!isArray(array1) || !isArray(array2)) return false;
 
-    const valueOccurrences: Record<string, boolean> = {};
-    array1.forEach((value) => {
-        valueOccurrences[value] = true;
-    });
-
-    return array2.some((value) => valueOccurrences[value]);
+    const valueOccurrences = new Set(array1);
+    return array2.some((value) => valueOccurrences.has(value));
 }
 
 /**

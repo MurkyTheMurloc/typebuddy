@@ -1,26 +1,37 @@
 {
-  "name": "typebuddy",
-  "version": "1.0.0",
-  "description": "",
-  "main": "./src/index.ts",
-  "module": "./src/index.ts",
-  "scripts": {
-    "test": "jest"
-  },
-  "dependencies": {
-
-
-    "typescript": "^5.4.5"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/jest": "^29.5.12",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.2",
-    "tsc": "^2.0.4",
-    "tsx": "^4.7.2"
-  },
-  "type": "module"
+    "name": "typebuddy",
+    "private": "false",
+    "description": "Your new best friend for simple typescript guards every project needs.",
+    "version": "0.1.0",
+    "main": "./src/type_helper.ts",
+    "module": "./src/type_helper.ts",
+    "scripts": {
+        "test": "jest",
+        "build": "tsc --outDir dist",
+        "clean": "rm -rf dist"
+    },
+    "files": [
+        "dist"
+    ],
+    "dependencies": {
+        "typescript": "^5.4.5"
+    },
+    "bugs": {
+        "url": "https://github.com/MurkyTheMurloc/typebuddy/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/MurkyTheMurloc/typebuddy"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/jest": "^29.5.12",
+        "jest": "^29.7.0",
+        "ts-jest": "^29.1.2",
+        "tsc": "^2.0.4",
+        "tsx": "^4.7.2"
+    },
+    "type": "module"
 }
