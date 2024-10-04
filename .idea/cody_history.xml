@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChatHistory">
+    <chats>
+      <list>
+        <chat>
+          <internalId value="d1152ad1-bcf3-4368-9804-dd6a31d02cd1" />
+        </chat>
+        <chat>
+          <enhancedContext>
+            <enhancedContext>
+              <remoteRepositories>
+                <list>
+                  <remoteRepository>
+                    <codebaseName value="github.com/murkythemurloc/ts-typehelper" />
+                  </remoteRepository>
+                </list>
+              </remoteRepositories>
+            </enhancedContext>
+          </enhancedContext>
+          <internalId value="c8d68c8b-f73e-47cf-a88f-f5887f1496c1" />
+        </chat>
+      </list>
+    </chats>
+    <defaultEnhancedContext>
+      <enhancedContext>
+        <remoteRepositories>
+          <list>
+            <remoteRepository>
+              <codebaseName value="github.com/murkythemurloc/ts-typehelper" />
+            </remoteRepository>
+          </list>
+        </remoteRepositories>
+      </enhancedContext>
+    </defaultEnhancedContext>
+  </component>
+</project>
