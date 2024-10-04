@@ -3,5 +3,12 @@
     "version": "0.1.0",
     "description": "Your new best friend for simple typescript guards every project needs.",
     "exports": "./src/type_helper.ts",
-    "license": "MIT"
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/MurkyTheMurloc/typebuddy/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/MurkyTheMurloc/typebuddy"
+    }
 }
